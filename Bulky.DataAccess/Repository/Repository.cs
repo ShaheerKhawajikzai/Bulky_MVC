@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,21 +18,38 @@ namespace Bulky.DataAccess.Repository
         {
             _db = db;
             _dbSet = _db.Set<T>();
+
         }
         public void Add(T entity)
         {
             _dbSet.Add(entity);
         }
 
-        public T Get(System.Linq.Expressions.Expression<Func<T, bool>> filter)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties =null)
         {
-            var getData = _dbSet.Where(filter);
-            return getData.FirstOrDefault();
+            IQueryable<T> query = _dbSet;
+            query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var item in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(item);
+                }
+            }
+            return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<T> GetAll(string? includeProperties=null)
         {
-            return _dbSet.ToList();
+            IQueryable<T> query = _dbSet;
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var item in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(item);
+                }
+            }
+            return query.ToList();
         }
 
         public void Remove(T entity)
