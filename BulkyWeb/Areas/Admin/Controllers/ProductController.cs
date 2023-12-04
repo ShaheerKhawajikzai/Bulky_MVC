@@ -1,6 +1,8 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models.Models;
 using Bulky.Models.ViewModels;
+using Bulky.Utitlity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Runtime.Remoting;
@@ -9,6 +11,8 @@ namespace BulkyWeb.Areas.Admin.Controllers
 {
 
     [Area("Admin")]
+   // [Authorize(Roles = StaticData.Role_Admin)]
+
     public class ProductController : Controller
     {
         private readonly IProductRepository _productRepo;
@@ -24,7 +28,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<Product> productList = _productRepo.GetAll(includeProperties: "Category").ToList();
+            List<Product> productList = _productRepo.GetAll(includeProperties:"Category").ToList();
             return View(productList);
         }
 
