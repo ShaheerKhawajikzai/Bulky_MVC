@@ -9,5 +9,7 @@ namespace Bulky.DataAccess.Repository.IRepository
 {
     public interface IApplicationUserRepository : IRepository<ApplicationUser>
     {
+        void Save();
+        void Update(ApplicationUser obj);
     }
 }

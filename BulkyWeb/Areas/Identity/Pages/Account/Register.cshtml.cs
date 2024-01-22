@@ -123,17 +123,18 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
             public IEnumerable<SelectListItem> CompanyList { get; set; }
         }
 
-
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (!_RoleManager.RoleExistsAsync(StaticData.Role_Customer)
-                .GetAwaiter().GetResult())
-            {
-                _RoleManager.CreateAsync(new IdentityRole(StaticData.Role_Employee)).GetAwaiter().GetResult();
-                _RoleManager.CreateAsync(new IdentityRole(StaticData.Role_Admin)).GetAwaiter().GetResult();
-                _RoleManager.CreateAsync(new IdentityRole(StaticData.Role_Customer)).GetAwaiter().GetResult();
-                _RoleManager.CreateAsync(new IdentityRole(StaticData.Role_Company)).GetAwaiter().GetResult();
-            }
+            // This Logic is now in DBInitializer class.
+             
+            //if (!_RoleManager.RoleExistsAsync(SD.Role_Customer)
+            //    .GetAwaiter().GetResult())
+            //{
+            //    _RoleManager.CreateAsync(new IdentityRole(SD.Role_Employee)).GetAwaiter().GetResult();
+            //    _RoleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).GetAwaiter().GetResult();
+            //    _RoleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).GetAwaiter().GetResult();
+            //    _RoleManager.CreateAsync(new IdentityRole(SD.Role_Company)).GetAwaiter().GetResult();
+            //}
             Input = new InputModel()
             {
                 RoleList = _RoleManager.Roles.Select(r => new SelectListItem()
@@ -141,6 +142,7 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                     Text = r.Name,
                     Value = r.Name
                 }),
+
                 CompanyList = _companyRepo.GetAll().Select(c => new SelectListItem()
                 {
                     Text = c.Name,
@@ -168,7 +170,7 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                 user.PostalCode = Input.PostalCode;
                 user.PhoneNumber = Input.PhoneNumber;
 
-                if (Input.Role == StaticData.Role_Company)
+                if (Input.Role == SD.Role_Company)
                 {
                     user.CompanyId = Input.CompanyId;
                 }
@@ -185,7 +187,7 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(user, StaticData.Role_Customer);
+                        await _userManager.AddToRoleAsync(user, SD.Role_Customer);
                     }
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -205,7 +207,14 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        if (User.IsInRole(SD.Role_Admin))
+                        {
+                            TempData["Success"] = "New User Created Successfully.";
+                        }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                        }
                         return LocalRedirect(returnUrl);
                     }
                 }

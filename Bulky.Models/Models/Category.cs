@@ -16,5 +16,6 @@ namespace Bulky.Models.Models
         [DisplayName("Display Order")]
         [Range(1, 100,ErrorMessage ="Display Order Must be between 1-100")]
         public int? DisplayOrder { get; set; }
+
     }
 }

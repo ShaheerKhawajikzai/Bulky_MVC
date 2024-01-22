@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Bulky.Utitlity
 {
-    public static class StaticData
+    public static class SD
     {
         public const string Role_Customer = "Customer";
         public const string Role_Company = "Company";
@@ -27,7 +27,7 @@ namespace Bulky.Utitlity
         public const string PaymentStatusRejected = "Rejected";
 
 
-
+        public const string SessionCart = "SessionShoppingCart";
 
     }
 }

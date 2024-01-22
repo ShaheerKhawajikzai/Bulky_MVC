@@ -10,7 +10,6 @@ namespace Bulky.Models.Models
 {
     public class ShoppingCart
     {
-        // public int ShoppingCartId { get; set; }
         public int Id { get; set; }
 
         public int ProductId { get; set; }
